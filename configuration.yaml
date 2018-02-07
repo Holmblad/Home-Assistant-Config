@@ -1,0 +1,184 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Casa Del Holmblad
+  # Location required to calculate the time the sun rises and sets
+  latitude: 57.797895
+  longitude: 12.527663
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 160
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Stockholm
+  # Customization file
+  customize: !include customize.yaml
+
+# Show links to resources in log and frontend
+# introduction:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+http:
+  # Secrets are defined in the file secrets.yaml
+  api_password: !secret http_password
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  # base_url: example.duckdns.org:8123
+
+  # Checks for available updates
+  # Note: This component will send some information about your system to
+  # the developers to assist with development of Home Assistant.
+  # For more information, please see:
+  # https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+
+  cors_allowed_origins:
+    - https://google.com
+    - https://home-assistant.io
+  trusted_networks:
+    - 127.0.0.1
+    - 192.168.200.0/24
+  ip_ban_enabled: True
+  login_attempts_threshold: 5
+
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+# Text to speech
+tts:
+  - platform: google
+
+# Tracking
+device_tracker:
+  - platform: tile
+    username: !secret tile_username
+    password: !secret tile_password 
+
+  - platform: asuswrt
+    host: 192.168.200.1
+    username: !secret router_username
+    password: !secret router_password
+
+# Webcam
+camera:
+  - platform: mjpeg
+    name: Framsida
+    still_image_url: http://192.168.200.221/image.jpg
+    mjpeg_url: http://192.168.200.221/video/mjpg.cgi
+    username: !secret cam_username
+    password: !secret cam_password
+
+#  - platform: mjpeg
+#    name: Sjösida
+#    still_image_url: http://192.168.200.222/image.jpg
+#    mjpeg_url: http://192.168.200.222/video/mjpg.cgi
+#    username: !secret cam_username
+#    password: !secret cam_password
+
+#  - platform: mjpeg
+#    name: Baksida
+#    still_image_url: http://192.168.200.223/image.jpg
+#    mjpeg_url: http://192.168.200.223/video/mjpg.cgi
+#    username: !secret cam_username
+#    password: !secret cam_password
+
+  - platform: mjpeg
+    name: Entré
+    still_image_url: http://192.168.200.224/image.jpg
+    mjpeg_url: http://192.168.200.224/video/mjpg.cgi
+    username: !secret cam_username
+    password: !secret cam_password
+
+# Enable Tellstick
+tellstick:
+
+# Weather prediction
+# Termometer
+sensor:
+  - platform: tellstick
+    168: Outside
+    167: Inside
+    only_named: True
+    temperature_scale: "°C"
+    datatype_mask: 1
+
+  - platform: yr
+
+  - platform: moon
+
+#  - platform: cpuspeed
+#    name: Host_LightMan
+
+  - platform: google_travel_time
+    api_key: !secret google_travel_api_key
+    origin: Bodasvedjan, Alingsås S, Sverige
+    destination: Bergfotsgatan 2, 431 35 Mölndal, Sverige
+
+# Media servers
+media_player:
+  - platform: kodi
+    name: Kodi_SpaceMan
+    host: 192.168.200.20
+
+  - platform: kodi
+    name: Kodi_MediaMan
+    host: 192.168.200.22
+
+  - platform: cast
+    name: Cast_IronMan
+    host: 192.168.200.21
+
+  - platform: cast
+    name: ThinMan
+    host: 192.168.200.100
+
+  - platform: cast
+    name: DoorMan
+    host: 192.168.200.101
+
+  - platform: onkyo
+    name: Reciver_IronMan
+    host: 192.168.200.21
+    sources:
+      video1: 'MediaMan'
+      video2: 'SpaceMan'
+      video5: 'LightMan'
+
+  - platform: panasonic_viera
+    name: FlatMan
+    host: 192.168.200.110
+
+notify:
+  - name: LightMan
+    platform: llamalab_automate
+    api_key: !secret llamalab_api_key
+    to: holmblad@gmail.com
+
+google:
+  client_id: "111470926003-no0qe4q41rkf6udt754p59qtbnq06teg.apps.googleusercontent.com"
+  client_secret: !secret client_secret
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
